@@ -21,10 +21,10 @@ import java.sql.SQLException;
 public class AccountDao {
 
     //转出
-    public void out(String outUser,int money,Connection conn) throws SQLException {
+    public void out(String outUser,int money) throws SQLException {
         String sql = "update account set money = money - ? where name = ?";
 
-     //   Connection conn = JdbcUtils.getConnection();
+        Connection conn = JdbcUtils.getConnection();
         PreparedStatement pstm = conn.prepareStatement(sql);
         pstm.setInt(1,money);
         pstm.setString(2,outUser);
@@ -33,10 +33,10 @@ public class AccountDao {
     }
 
     //转入
-    public void in(String inUser,int money,Connection conn) throws SQLException {
+    public void in(String inUser,int money) throws SQLException {
         String sql = "update account set money = mopney + ? where name = ?";
 
-    //    Connection conn = JdbcUtils.getConnection();
+        Connection conn = JdbcUtils.getConnection();
         PreparedStatement pstm = conn.prepareStatement(sql);
         pstm.setInt(1,money);
         pstm.setString(2,inUser);

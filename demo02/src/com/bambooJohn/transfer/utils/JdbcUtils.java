@@ -16,9 +16,25 @@ public class JdbcUtils {
     //c3p0数据库连接池对象属性
     private static final ComboPooledDataSource ds = new ComboPooledDataSource();
 
+    private static ThreadLocal<Connection> tl = new ThreadLocal<>();
+
     //获取连接
+    /*
+        原本：直接从连接池中获取连接
+        现在：
+            1、直接获取当前线程绑定的连接对象
+            2、如果连接对象是空的
+                2.1 再去连接池中获取连接
+                2.2 将此连接对象跟当前线程进行绑定
+     */
     public static Connection getConnection() throws SQLException {
-        return ds.getConnection();
+
+        Connection conn = tl.get();
+        if(conn == null){
+            conn = ds.getConnection();
+            tl.set(conn);
+        }
+        return conn;
     }
 
     public static void release(AutoCloseable... ios){
@@ -38,6 +54,9 @@ public class JdbcUtils {
             if(conn != null){
                 //提交事务
                 conn.commit();
+                //解绑当前线程绑定的连接对象
+                tl.remove();
+
                 //释放连接
                 conn.close();
             }
@@ -51,6 +70,8 @@ public class JdbcUtils {
             if(conn != null){
                 //回滚事务
                 conn.rollback();
+                //解绑当前线程绑定的连接对象
+                tl.remove();
                 //释放连接
                 conn.close();
             }

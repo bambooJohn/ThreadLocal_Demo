@@ -26,18 +26,18 @@ public class AccountService {
         AccountDao ad = new AccountDao();
         Connection conn = null;
         try {
-            synchronized (AccountService.class){
+         //   synchronized (AccountService.class){
                 //开启事务
                 conn = JdbcUtils.getConnection();
                 conn.setAutoCommit(false);
                 //转出
-                ad.out(outUser,money,conn);
+                ad.out(outUser,money);
                 int i = 1 / 0;
                 //转入
-                ad.in(inUser,money,conn);
+                ad.in(inUser,money);
 
                 JdbcUtils.commitAndClose(conn);
-            }
+        //    }
 
         }catch (Exception e){
             e.printStackTrace();
